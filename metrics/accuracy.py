@@ -70,13 +70,14 @@ def get_perfo(filename):
         chmod('conlleval.pl', stat.S_IRWXU) # give the execute permissions
     if len(PREFIX) > 0:
         chmod(PREFIX + 'conlleval.pl', stat.S_IRWXU) # give the execute permissions
-        cmd = PREFIX + 'conlleval.pl < %s | grep accuracy > %s'%(filename,tempfile)
+        cmd = [PREFIX + 'conlleval.pl']
     else:
-        cmd = './conlleval.pl < %s | grep accuracy > %s'%(filename,tempfile)
-    print(cmd)
-    out = os.system(cmd)
-    out = open(tempfile).readlines()[0].split()
-    os.system('rm %s'%tempfile)
+        cmd = ['./conlleval.pl']
+    with open(filename, 'rb') as input_file, open(tempfile, 'w') as output_file:
+        subprocess.run(cmd, stdin=input_file, stdout=output_file)
+    with open(tempfile) as f:
+        out = f.readlines()[0].split()
+    os.remove(tempfile)
     precision = float(out[6][:-2])
     recall    = float(out[8][:-2])
     f1score   = float(out[10])
