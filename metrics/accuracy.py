@@ -74,7 +74,7 @@ def get_perfo(filename):
     else:
         cmd = './conlleval.pl < %s | grep accuracy > %s'%(filename,tempfile)
     print(cmd)
-    out = os.system(cmd)
+    out = os.system(cmd)  # @BUG_HERE
     out = open(tempfile).readlines()[0].split()
     os.system('rm %s'%tempfile)
     precision = float(out[6][:-2])
